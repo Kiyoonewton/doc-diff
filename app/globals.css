@@ -1,0 +1,295 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 5px;
+  transition: background 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Body styling */
+body {
+  @apply bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100;
+  @apply min-h-screen;
+  @apply antialiased;
+}
+
+/* Print styles for PDF export */
+@media print {
+  body {
+    @apply bg-white;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-full-width {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 20px !important;
+  }
+}
+
+/* Custom animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Enhanced diff line styles */
+.diff-line {
+  @apply transition-all duration-150 ease-in-out;
+}
+
+.diff-line:hover {
+  @apply bg-opacity-80;
+}
+
+/* Search highlight animation */
+mark {
+  @apply animate-pulse-subtle;
+}
+
+/* Card shadows and hover effects */
+.card-hover {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+.card-hover:hover {
+  @apply shadow-lg transform -translate-y-0.5;
+}
+
+/* Button enhancements */
+.btn-primary {
+  @apply relative overflow-hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  @apply absolute inset-0 bg-white opacity-0 transition-opacity duration-200;
+}
+
+.btn-primary:hover::before {
+  @apply opacity-10;
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+input:focus-visible {
+  @apply outline-none ring-2 ring-blue-500 ring-offset-2;
+}
+
+/* Gradient text */
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600;
+}
+
+/* Loading spinner */
+.spinner {
+  @apply inline-block w-5 h-5 border-2 border-current border-t-transparent rounded-full;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Tooltip styles */
+.tooltip {
+  @apply invisible absolute z-50;
+}
+
+.has-tooltip:hover .tooltip {
+  @apply visible;
+}
+
+/* Enhanced code display */
+.code-line {
+  @apply font-mono text-sm leading-relaxed;
+}
+
+/* Diff stats badges */
+.stat-badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold;
+  @apply transition-all duration-200 ease-in-out;
+}
+
+.stat-badge:hover {
+  @apply transform scale-105;
+}
+
+/* Collapsible section transitions */
+.collapse-enter {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.collapse-enter-active {
+  max-height: 1000px;
+}
+
+/* Selection colors */
+::selection {
+  @apply bg-blue-200 text-blue-900;
+}
+
+/* Improved link styles */
+a {
+  @apply transition-colors duration-150;
+}
+
+/* Badge pulse */
+.badge-pulse {
+  @apply relative;
+}
+
+.badge-pulse::after {
+  content: '';
+  @apply absolute inset-0 rounded-full animate-ping opacity-75;
+}
+
+/* Glass morphism effect */
+.glass {
+  @apply bg-white bg-opacity-70 backdrop-blur-md;
+  @apply border border-white border-opacity-20;
+  @apply shadow-xl;
+}
+
+/* Gradient borders */
+.gradient-border {
+  @apply relative;
+}
+
+.gradient-border::before {
+  content: '';
+  @apply absolute inset-0 rounded-lg;
+  @apply bg-gradient-to-r from-blue-500 to-indigo-500;
+  @apply -z-10;
+  padding: 2px;
+}
+
+/* Improved table/grid styling */
+.diff-grid-header {
+  @apply sticky top-0 z-10;
+  @apply backdrop-blur-sm bg-opacity-95;
+}
+
+/* Enhanced transition for view mode switch */
+.view-transition {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Status indicators */
+.status-dot {
+  @apply inline-block w-2 h-2 rounded-full;
+}
+
+.status-dot.added {
+  @apply bg-green-500;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+.status-dot.removed {
+  @apply bg-red-500;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.status-dot.modified {
+  @apply bg-yellow-500;
+  box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.2);
+}
+
+/* Enhanced file input */
+input[type="file"]::file-selector-button {
+  @apply transition-all duration-200;
+}
+
+input[type="file"]::file-selector-button:hover {
+  @apply transform scale-105;
+}
+
+/* Skeleton loading */
+.skeleton {
+  @apply bg-gray-200 animate-pulse rounded;
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  /* Uncomment if you want dark mode support
+  body {
+    @apply bg-gray-900 text-gray-100;
+  }
+  */
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .diff-grid {
+    font-size: 12px;
+  }
+
+  .btn-group {
+    @apply flex-col;
+  }
+}
