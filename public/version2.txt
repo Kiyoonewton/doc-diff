@@ -1,0 +1,82 @@
+1. Introduction
+Welcome to ExampleCorp! 🎉 Please read these terms carefully before using our services.  
+By accessing or registering, you confirm you are at least 18 years old and agree to comply with these terms.
+
+2. User Responsibilities
+As a user, you agree to:
+- Provide accurate and up-to-date registration details.
+- Keep your account secure at all times (including enabling 2FA 🔐).
+- Comply with all applicable international, federal, and local laws.
+- Not misuse the services (e.g., spamming, hacking, scraping bots 🤖).
+- Respect intellectual property rights of both ExampleCorp and third parties.
+
+3. Limitations of Liability
+ExampleCorp is not responsible for:
+- Temporary service interruptions
+- Permanent or temporary data loss
+- Indirect or consequential damages
+- Unauthorized account access due to user negligence
+- Force majeure events (natural disasters 🌪️, wars, government actions)
+
+4. Governing Law and Jurisdiction
+These terms are governed by the laws of California and applicable U.S. federal law.  
+Disputes will be resolved in the courts of San Francisco County.
+
+5. Contact Information
+For assistance or questions:
+- Email support@example.com  
+- Call +1-800-555-1234  
+- Live chat available 24/7 💬  
+
+6. Miscellaneous
+- Headings are for reference only.  
+- Failure to enforce a provision does not waive our rights.  
+- Entire agreement supersedes prior versions.  
+- If any clause is deemed invalid, the remaining terms stay enforceable.  
+
+7. Prohibited Conduct
+You may not:
+- Share your password (accounts are personal).  
+- Attempt unauthorized access to systems.  
+- Reverse engineer or decompile software components.  
+- Spread malware, spam, phishing content, or hateful speech 🚫.  
+- Use the platform for fraudulent or deceptive purposes.  
+
+8. Privacy & Data
+We collect:
+- Name, email, contact info, payment details (encrypted).  
+- Usage data, cookies, and location metadata. 📍  
+We do **not** sell personal data.  
+We may share anonymized analytics data with partners.  
+
+9. Refund & Cancellation Policy
+Refunds are available if:
+- Service was not delivered.  
+- Double billing occurred.  
+- You cancel within 7 days of subscription start.  
+Refunds are processed within **10** business days.  
+
+10. Account Suspension & Termination
+We may suspend or terminate accounts that violate terms.  
+Notice will be given via registered email.  
+Severe violations may result in immediate termination without notice. ⚠️  
+
+11. International Availability
+Our services are offered globally, but feature availability may vary by region. 🌍  
+Certain features are restricted in embargoed countries. 🚫  
+
+12. Accessibility & Inclusivity
+We strive to make our services accessible to all users.  
+- Screen reader compatibility is provided.  
+- Color contrast guidelines followed.  
+- Keyboard navigation supported.  
+We welcome feedback from accessibility advocates.  
+
+13. Revisions & Updates
+These terms may be updated periodically.  
+Users will be notified via email at least 14 days before changes take effect.  
+Last updated: July 2025.  
+
+14. Beta Features
+Some users may gain early access to beta features.  
+These are provided "as is," with no guarantees. 🧪  
