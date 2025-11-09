@@ -52,37 +52,71 @@ export function computeDiff(oldText: string, newText: string): LineChange[] {
     });
   });
   
-  // Merge adjacent removed/added lines into modified lines with word-level diff
+  // Merge adjacent removed/added blocks into modified lines with word-level diff
   const mergedChanges: LineChange[] = [];
   let i = 0;
-  
+
   while (i < changes.length) {
     const current = changes[i];
-    const next = changes[i + 1];
-    
-    if (
-      current.type === 'removed' &&
-      next &&
-      next.type === 'added'
-    ) {
-      // Compute word-level diff
-      const wordDiff = Diff.diffWords(current.oldContent || '', next.newContent || '');
-      
-      mergedChanges.push({
-        lineNumber: current.lineNumber,
-        type: 'modified',
-        oldContent: current.oldContent,
-        newContent: next.newContent,
-        wordChanges: wordDiff,
-      });
-      
-      i += 2;
+
+    // Check if we have a block of removed lines
+    if (current.type === 'removed') {
+      const removedLines: LineChange[] = [current];
+      let j = i + 1;
+
+      // Collect all consecutive removed lines
+      while (j < changes.length && changes[j].type === 'removed') {
+        removedLines.push(changes[j]);
+        j++;
+      }
+
+      // Check if followed by added lines
+      const addedLines: LineChange[] = [];
+      while (j < changes.length && changes[j].type === 'added') {
+        addedLines.push(changes[j]);
+        j++;
+      }
+
+      if (addedLines.length > 0) {
+        // Pair up removed and added lines
+        const maxLength = Math.max(removedLines.length, addedLines.length);
+
+        for (let k = 0; k < maxLength; k++) {
+          const removedLine = k < removedLines.length ? removedLines[k] : null;
+          const addedLine = k < addedLines.length ? addedLines[k] : null;
+
+          if (removedLine && addedLine) {
+            // Both exist - create modified line with word diff
+            const wordDiff = Diff.diffWords(removedLine.oldContent || '', addedLine.newContent || '');
+            mergedChanges.push({
+              lineNumber: removedLine.lineNumber,
+              type: 'modified',
+              oldContent: removedLine.oldContent,
+              newContent: addedLine.newContent,
+              wordChanges: wordDiff,
+            });
+          } else if (removedLine) {
+            // Only removed line
+            mergedChanges.push(removedLine);
+          } else if (addedLine) {
+            // Only added line
+            mergedChanges.push(addedLine);
+          }
+        }
+
+        i = j;
+      } else {
+        // No added lines following, just push all removed lines
+        mergedChanges.push(...removedLines);
+        i = j;
+      }
     } else {
+      // Not a removed line, just push it
       mergedChanges.push(current);
       i++;
     }
   }
-  
+
   return mergedChanges;
 }
 
