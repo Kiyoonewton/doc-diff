@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { LineChange, WordChange } from "../utils/diffUtils";
+import { LineChange, WordChange, alignChangesForSideBySide } from "../utils/diffUtils";
 
 interface SideBySideViewProps {
   changes: LineChange[];
@@ -68,17 +68,22 @@ export default function SideBySideView({
     setExpandedSections(newExpanded);
   };
 
+  // Align changes for side-by-side view
+  const alignedChanges = alignChangesForSideBySide(changes);
+
   // Group consecutive unchanged lines
   const groupedChanges: Array<{
     type: "change" | "collapsed";
-    changes: LineChange[];
+    changes: Array<{ old: LineChange | null; new: LineChange | null }>;
     startIndex: number;
   }> = [];
-  let unchangedBuffer: LineChange[] = [];
+  let unchangedBuffer: Array<{ old: LineChange | null; new: LineChange | null }> = [];
   let bufferStartIndex = 0;
 
-  changes.forEach((change, idx) => {
-    if (change.type === "unchanged" && collapseUnchanged) {
+  alignedChanges.forEach((change, idx) => {
+    const isUnchanged = change.old?.type === "unchanged" || change.new?.type === "unchanged";
+
+    if (isUnchanged && collapseUnchanged) {
       if (unchangedBuffer.length === 0) {
         bufferStartIndex = idx;
       }
@@ -126,7 +131,13 @@ export default function SideBySideView({
     });
   }
 
-  const renderRow = (change: LineChange, idx: number) => {
+  const renderRow = (
+    alignedChange: { old: LineChange | null; new: LineChange | null },
+    idx: number
+  ) => {
+    const oldChange = alignedChange.old;
+    const newChange = alignedChange.new;
+
     const isSearchMatch = searchResults?.includes(idx);
     const isCurrentMatch =
       isSearchMatch &&
@@ -136,12 +147,16 @@ export default function SideBySideView({
     let oldBgColor = "bg-white";
     let newBgColor = "bg-white";
 
-    if (change.type === "removed") {
+    // Determine background colors based on change types
+    if (oldChange?.type === "removed") {
       oldBgColor = "bg-red-100";
-    } else if (change.type === "added") {
-      newBgColor = "bg-green-100";
-    } else if (change.type === "modified") {
+    } else if (oldChange?.type === "modified") {
       oldBgColor = "bg-yellow-50";
+    }
+
+    if (newChange?.type === "added") {
+      newBgColor = "bg-green-100";
+    } else if (newChange?.type === "modified") {
       newBgColor = "bg-yellow-50";
     }
 
@@ -164,32 +179,24 @@ export default function SideBySideView({
         {/* Left side (old) */}
         <div
           ref={(el) => {
-            if (
-              el &&
-              searchRefs &&
-              (change.type === "removed" ||
-                change.type === "modified" ||
-                change.type === "unchanged")
-            ) {
+            if (el && searchRefs && oldChange) {
               searchRefs.current.set(idx, el);
             }
           }}
           className={`p-2 border-b border-gray-200 min-h-[2rem] ${oldBgColor}`}
         >
-          {(change.type === "removed" ||
-            change.type === "modified" ||
-            change.type === "unchanged") && (
+          {oldChange && (
             <div className="flex">
               <span className="text-gray-400 mr-3 select-none w-8 text-right flex-shrink-0">
-                {change.lineNumber}
+                {oldChange.lineNumber}
               </span>
               <span className="flex-1 whitespace-pre-wrap break-words">
-                {change.type === "modified" && change.wordChanges
+                {oldChange.type === "modified" && oldChange.wordChanges
                   ? renderWordChanges(
-                      change.wordChanges.filter((w) => !w.added),
+                      oldChange.wordChanges.filter((w) => !w.added),
                       searchTerm
                     )
-                  : highlightText(change.oldContent || "", searchTerm)}
+                  : highlightText(oldChange.oldContent || "", searchTerm)}
               </span>
             </div>
           )}
@@ -199,21 +206,19 @@ export default function SideBySideView({
         <div
           className={`p-2 border-b border-gray-200 min-h-[2rem] ${newBgColor}`}
         >
-          {(change.type === "added" ||
-            change.type === "modified" ||
-            change.type === "unchanged") && (
+          {newChange && (
             <div className="flex">
               <span className="text-gray-400 mr-3 select-none w-8 text-right flex-shrink-0">
-                {change.lineNumber}
+                {newChange.lineNumber}
               </span>
               <span className="flex-1 whitespace-pre-wrap break-words">
-                {change.type === "modified" && change.wordChanges
+                {newChange.type === "modified" && newChange.wordChanges
                   ? renderWordChanges(
-                      change.wordChanges.filter((w) => !w.removed),
+                      newChange.wordChanges.filter((w) => !w.removed),
                       searchTerm
                     )
                   : highlightText(
-                      change.newContent || change.oldContent || "",
+                      newChange.newContent || newChange.oldContent || "",
                       searchTerm
                     )}
               </span>
@@ -239,8 +244,10 @@ export default function SideBySideView({
         if (group.type === "collapsed") {
           const isExpanded = expandedSections.has(groupIdx);
           const lineCount = group.changes.length;
-          const firstLine = group.changes[0].lineNumber;
-          const lastLine = group.changes[lineCount - 1].lineNumber;
+          const firstChange = group.changes[0];
+          const lastChange = group.changes[lineCount - 1];
+          const firstLine = firstChange.old?.lineNumber || firstChange.new?.lineNumber || 0;
+          const lastLine = lastChange.old?.lineNumber || lastChange.new?.lineNumber || 0;
 
           return (
             <React.Fragment key={`group-${groupIdx}`}>

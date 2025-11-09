@@ -91,24 +91,53 @@ export function alignChangesForSideBySide(changes: LineChange[]): Array<{
   new: LineChange | null;
 }> {
   const aligned: Array<{ old: LineChange | null; new: LineChange | null }> = [];
-  
-  let oldIndex = 0;
-  let newIndex = 0;
-  const oldChanges = changes.filter(c => c.type === 'removed' || c.type === 'unchanged' || c.type === 'modified');
-  const newChanges = changes.filter(c => c.type === 'added' || c.type === 'unchanged' || c.type === 'modified');
-  
-  // Rebuild from original changes for proper alignment
-  changes.forEach((change) => {
-    if (change.type === 'unchanged') {
-      aligned.push({ old: change, new: change });
-    } else if (change.type === 'modified') {
-      aligned.push({ old: change, new: change });
-    } else if (change.type === 'removed') {
-      aligned.push({ old: change, new: null });
-    } else if (change.type === 'added') {
-      aligned.push({ old: null, new: change });
+
+  let i = 0;
+  while (i < changes.length) {
+    const current = changes[i];
+
+    if (current.type === 'unchanged') {
+      // Unchanged lines appear on both sides
+      aligned.push({ old: current, new: current });
+      i++;
+    } else if (current.type === 'modified') {
+      // Modified lines appear on both sides with different content
+      aligned.push({ old: current, new: current });
+      i++;
+    } else if (current.type === 'removed') {
+      // Look for consecutive removed and added lines to pair them
+      const removedLines: LineChange[] = [current];
+      let j = i + 1;
+
+      // Collect all consecutive removed lines
+      while (j < changes.length && changes[j].type === 'removed') {
+        removedLines.push(changes[j]);
+        j++;
+      }
+
+      // Collect all consecutive added lines
+      const addedLines: LineChange[] = [];
+      while (j < changes.length && changes[j].type === 'added') {
+        addedLines.push(changes[j]);
+        j++;
+      }
+
+      // Pair up removed and added lines
+      const maxLength = Math.max(removedLines.length, addedLines.length);
+      for (let k = 0; k < maxLength; k++) {
+        aligned.push({
+          old: k < removedLines.length ? removedLines[k] : null,
+          new: k < addedLines.length ? addedLines[k] : null,
+        });
+      }
+
+      i = j;
+    } else if (current.type === 'added') {
+      // Added line without a corresponding removed line
+      aligned.push({ old: null, new: current });
+      i++;
     }
-  });
-  
+  }
+
   return aligned;
 }
